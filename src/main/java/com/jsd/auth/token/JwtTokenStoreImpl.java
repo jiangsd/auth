@@ -3,10 +3,12 @@ package com.jsd.auth.token;
 import java.util.Date;
 import java.util.Optional;
 
+import com.nimbusds.jose.JOSEException;
 import com.nimbusds.jose.JWSAlgorithm;
 import com.nimbusds.jose.JWSHeader;
 import com.nimbusds.jose.JWSSigner;
 import com.nimbusds.jose.crypto.MACSigner;
+import com.nimbusds.jose.crypto.MACVerifier;
 import com.nimbusds.jwt.JWTClaimsSet;
 import com.nimbusds.jwt.SignedJWT;
 
@@ -47,7 +49,33 @@ public class JwtTokenStoreImpl implements TokenStore {
     
     @Override
     public Optional<Token> Read(String tokenStr) {
-        return Optional.empty();
+        
+        try {
+            var verifier = new MACVerifier(signingKey.getBytes());
+            var jwt = SignedJWT.parse(tokenStr);
+            if(!jwt.verify(verifier)) {
+                throw new JOSEException("Invalid signature");
+            }
+
+            var claims = jwt.getJWTClaimsSet();
+            // TODO: add audience
+            /* if(!claims.getAudience().contains(audience)) { */
+                /* throw new JOSEException("Incorrect audience"); */
+            /* } */
+            
+            var expiry = claims.getExpirationTime().toInstant();
+            var subject = claims.getSubject();
+            var token = new Token(subject, expiry);
+            var attrs = claims.getJSONObjectClaim("attrs");
+            attrs.forEach((key, value) ->
+                    token.attrs.put(key, (String)value));
+
+            return Optional.of(token);
+
+        } catch (java.text.ParseException | JOSEException e) {
+            return Optional.empty();
+        }
+
     }
     
 }

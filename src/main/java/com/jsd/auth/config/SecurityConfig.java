@@ -3,6 +3,7 @@ package com.jsd.auth.config;
 import java.util.List;
 
 import com.jsd.auth.filter.InitialAuthenticationFilter;
+import com.jsd.auth.filter.JwtAuthenticationFilter;
 import com.jsd.auth.provider.UsernamePasswordAuthenticationProvider;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -33,8 +34,8 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
     @Autowired
     private UsernamePasswordAuthenticationProvider usernamePasswordAuthenticationProvider;
 
-    // @Autowired
-    // private JwtAuthenticationFilter jwtAuthenticationFilter;
+    @Autowired
+    private JwtAuthenticationFilter jwtAuthenticationFilter;
 
 
     @Override
@@ -64,8 +65,8 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
         http.csrf().disable();
         // http.authorizeRequests().anyRequest().permitAll();
 
-        http.addFilterAt(initialAuthenticationFilter, BasicAuthenticationFilter.class);
-            // .addFilterAfter(jwtAuthenticationFilter, BasicAuthenticationFilter.class);
+        http.addFilterAt(initialAuthenticationFilter, BasicAuthenticationFilter.class)
+            .addFilterAfter(jwtAuthenticationFilter, BasicAuthenticationFilter.class);
 
         // http.authorizeRequests().antMatchers("/v/resetPassword*").permitAll();
         // http.authorizeRequests().anyRequest().authenticated();
