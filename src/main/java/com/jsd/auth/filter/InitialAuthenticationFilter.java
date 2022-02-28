@@ -42,6 +42,9 @@ public class InitialAuthenticationFilter extends OncePerRequestFilter {
     @Value("${jwt.expiry.minutes}")
     private int expiryMinutes;
 
+    @Value("${jwt.refresh.expiry.minutes}")
+    private int refreshExpiryMinutes;
+
     @Autowired
     private TokenStore tokenStore;
 

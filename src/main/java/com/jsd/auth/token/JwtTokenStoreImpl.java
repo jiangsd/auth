@@ -48,7 +48,7 @@ public class JwtTokenStoreImpl implements TokenStore {
     }
     
     @Override
-    public Optional<Token> Read(String tokenStr) {
+    public Optional<Token> read(String tokenStr) {
         
         try {
             var verifier = new MACVerifier(signingKey.getBytes());

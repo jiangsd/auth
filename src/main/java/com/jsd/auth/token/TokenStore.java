@@ -8,7 +8,7 @@ import java.util.concurrent.ConcurrentHashMap;
 public interface TokenStore {
 
     String create(Token token);
-    Optional<Token> Read(String tokenStr);
+    Optional<Token> read(String tokenStr);
 
     class Token {
 
